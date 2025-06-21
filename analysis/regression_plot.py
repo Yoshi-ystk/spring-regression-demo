@@ -1,10 +1,20 @@
+import os
+
+import matplotlib
+import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-import matplotlib.pyplot as plt
-import matplotlib
+
 matplotlib.rcParams['font.family'] = ['Hiragino Sans', 'Meiryo', 'IPAexGothic', 'sans-serif']
 
-df = pd.read_csv('spring_data.csv')
+# このスクリプト（regression_plot.py）のあるディレクトリを取得
+base_dir = os.path.dirname(__file__)  # 'analysis' フォルダ
+
+# データファイルへのパスを構築（ルートから見た data/spring_data.csv）
+data_path = os.path.join(base_dir, '..', 'data', 'spring_data.csv')
+
+# CSVを読み込み
+df = pd.read_csv(data_path)
 
 # データ　（x = 重さ, y = バネの長さ）
 x = df['weight'].values
@@ -14,16 +24,11 @@ y = df['length'].values
 x_mean = np.mean(x)
 y_mean = np.mean(y)
 
-# 傾き a の計算式: Σ((x - x̄)(y - ȳ)) / Σ((x - x̄)^2) (共分散 / 分散)
-numerator = np.sum((x - x_mean) * (y - y_mean)) # 分子
-denominator = np.sum((x - x_mean) ** 2)         # 分母
-a = numerator / denominator                     # 傾き
+# 傾き a の計算式(共分散 / 分散) : Σ((x - x̄)(y - ȳ)) / Σ((x - x̄)^2)
+a = np.sum((x - x_mean) * (y - y_mean)) / np.sum((x - x_mean)**2)
 
-# 切片 b の計算 (yの平均 - a * xの平均)
+# 切片 b の計算式：b = ȳ - a * x̄
 b = y_mean - a * x_mean
-
-# 回帰式の表示
-print(f"回帰式: y = {a:.3f}x + {b:.3f}")
 
 # 回帰直線の予測値を計算　(pred = 予測)
 y_pred = a * x + b
@@ -33,6 +38,8 @@ ss_total = np.sum((y - y_mean) ** 2)        # 全体のばらつき
 ss_residual = np.sum((y - y_pred) ** 2)     # 誤差
 r2 = 1 - (ss_residual / ss_total)
 
+# 結果表示
+print(f"回帰式: y = {a:.3f}x + {b:.3f}")
 print(f"決定係数 R² = {r2:.3f}")
 
 # グラフ描画
@@ -42,6 +49,7 @@ plt.plot(x, y_pred, label=f'回帰直線: y = {a:.2f}x + {b:.2f}', color='#ff7f0
 plt.xlabel('重さ [g]', fontsize=12)
 plt.ylabel('バネの長さ [mm]', fontsize=12)
 plt.title(f'重さとバネの長さの関係 （線形回帰）\nR² = {r2:.3f}', fontsize=14)
-plt.legend()
 plt.grid(True, linestyle='--', linewidth=0.5)
+plt.legend()
+plt.tight_layout()
 plt.show()
