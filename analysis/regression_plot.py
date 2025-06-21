@@ -6,22 +6,17 @@ import numpy as np
 import pandas as pd
 
 matplotlib.rcParams["font.family"] = [
-    "Hiragino Sans",
-    "Meiryo",
-    "IPAexGothic",
-    "sans-serif",
+    "Hiragino Sans", "Meiryo", "IPAexGothic", "sans-serif",
 ]
 
-# このスクリプト（regression_plot.py）のあるディレクトリを取得
-base_dir = os.path.dirname(__file__)  # 'analysis' フォルダ
-
-# データファイルへのパスを構築（ルートから見た data/spring_data.csv）
+# このスクリプトのあるディレクトリを取得
+base_dir = os.path.dirname(__file__)
+# データファイルへのパス構築
 data_path = os.path.join(base_dir, "..", "data", "spring_data.csv")
-
-# CSVを読み込み
+# CSV読み込み
 df = pd.read_csv(data_path)
 
-# データ　（x = 重さ, y = バネの長さ）
+# データ (x = 重さ, y = バネの長さ)
 x = df["weight"].values
 y = df["length"].values
 
@@ -40,8 +35,8 @@ y_pred = a * x + b
 
 # 決定係数 R² の計算 (1- (誤差の合計 / 全体の変動量)
 ss_total = np.sum((y - y_mean) ** 2)  # 全体のばらつき
-ss_residual = np.sum((y - y_pred) ** 2)  # 誤差
-r2 = 1 - (ss_residual / ss_total)
+ss_residual = np.sum((y - y_pred) ** 2)  # 予測からのズレ(誤差)
+r2 = 1 - (ss_residual / ss_total) #「直線でどのくらい説明できたか」の割合
 
 # 結果表示
 print(f"回帰式: y = {a:.3f}x + {b:.3f}")
